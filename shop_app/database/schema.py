@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 from .models import StatusChoices
 from datetime import date, datetime
@@ -8,7 +8,7 @@ class UserProfileOutSchema(BaseModel):
     first_name: str
     last_name: str
     username: str
-    email: str
+    email: EmailStr
     age: Optional[int]
     phone_number: Optional[str]
     avatar: Optional[str]
@@ -22,10 +22,15 @@ class UserProfileInputSchema(BaseModel):
     first_name: str
     last_name: str
     username: str
-    email: str
+    email: EmailStr
     age: Optional[int]
     phone_number: Optional[str]
     avatar: Optional[str]
+    password: str
+
+
+class UserLoginSchema(BaseModel):
+    username: str
     password: str
 
 

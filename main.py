@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from shop_app.api import (users, categories, subcategory,
-                          product, pro_image, reviews)
+                          product, pro_image, reviews, auth)
 import uvicorn
 
 
@@ -11,6 +11,7 @@ shop_app.include_router(subcategory.subcategory_router)
 shop_app.include_router(product.product_router)
 shop_app.include_router(pro_image.product_images_router)
 shop_app.include_router(reviews.review_router)
+shop_app.include_router(auth.auth_router)
 
 
 

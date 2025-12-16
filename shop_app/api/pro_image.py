@@ -39,5 +39,31 @@ async def detail_product_image(image_id: int, db: Session = Depends(get_db)):
 
 
 
+@product_images_router.put("/{image_id}/", response_model=ProductImageOutSchema)
+async def update_product_image(image_id: int, image_data: ProductImageInputSchema,db: Session = Depends(get_db)):
+    image = db.query(ProductImage).filter(ProductImage.id == image_id).first()
+    if not image:
+        raise HTTPException(status_code=400, detail="Image not found")
+
+    for key, value in image_data.dict().items():
+        setattr(image, key, value)
+
+    db.commit()
+    db.refresh(image)
+    return image
+
+
+@product_images_router.delete("/{image_id}")
+async def delete_product_image(image_id: int,db: Session = Depends(get_db)):
+    image = db.query(ProductImage).filter(ProductImage.id == image_id).first()
+    if not image:
+        raise HTTPException(status_code=400, detail="Image not found")
+
+    db.delete(image)
+    db.commit()
+    return {"detail": "Image deleted successfully"}
+
+
+
 
 

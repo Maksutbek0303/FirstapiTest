@@ -35,3 +35,29 @@ async def detail_subcategory(subcategory_id: int, db: Session = Depends(get_db))
     if not subcategory:
         raise HTTPException(status_code=400, detail='no id')
     return subcategory
+
+
+
+@subcategory_router.put("/{subcategory_id}/", response_model=SubCategoryOutSchema)
+async def update_subcategory(subcategory_id: int, subcategory_data: SubCategoryInputSchema,db: Session = Depends(get_db)):
+    subcategory = db.query(SubCategory).filter(SubCategory.id == subcategory_id).first()
+    if not subcategory:
+        raise HTTPException(status_code=400, detail="subcategory not found")
+
+    for key, value in subcategory_data.dict().items():
+        setattr(subcategory, key, value)
+
+    db.commit()
+    db.refresh(subcategory)
+    return subcategory
+
+
+@subcategory_router.delete("/{subcategory_id}/")
+async def delete_subcategory(subcategory_id: int,db: Session = Depends(get_db)):
+    subcategory = db.query(SubCategory).filter(SubCategory.id == subcategory_id).first()
+    if not subcategory:
+        raise HTTPException(status_code=400, detail="Subcategory not found")
+
+    db.delete(subcategory)
+    db.commit()
+    return {"detail": "subcategory deleted successfully"}

@@ -38,4 +38,28 @@ async def detail_product(product_id: int, db: Session = Depends(get_db)):
 
 
 
+@product_router.put("/{product_id}/", response_model=ProductOutSchema)
+async def update_product(product_id: int, product_data: ProductInputSchema,db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=400, detail="Product not found")
+
+    for key, value in product_data.dict().items():
+        setattr(product, key, value)
+
+    db.commit()
+    db.refresh(product)
+    return product
+
+
+@product_router.delete("/{product_id}")
+async def delete_product(product_id: int,db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=400, detail="Product not found")
+
+    db.delete(product)
+    db.commit()
+    return {"detail": "Product deleted successfully"}
+
 
