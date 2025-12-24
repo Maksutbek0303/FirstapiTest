@@ -28,11 +28,12 @@ class UserProfile(Base):
     date_registered : Mapped[date] = mapped_column(Date, default=date.today)
 
 
-
     user_review: Mapped[List['Review']] = relationship(back_populates='user',
                                                      cascade='all, delete-orphan')
     user_token: Mapped[List['RefreshToken']] = relationship(back_populates='token_user',
                                                             cascade='all, delete-orphan')
+    def __str__(self):
+        return f'{self.first_name}, {self.last_name}'
 
 class RefreshToken(Base):
     __tablename__ = 'refresh_token'
@@ -53,6 +54,8 @@ class Category(Base):
     subcategories : Mapped[List['SubCategory']] = relationship('SubCategory',
                                                                back_populates='category',
                                                                cascade='all, delete-orphan')
+    def __str__(self):
+        return f'{self.category_name}'
 
 
 class SubCategory(Base):
@@ -65,6 +68,9 @@ class SubCategory(Base):
     category : Mapped[Category] = relationship(Category, back_populates='subcategories')
     subcategory_product: Mapped[List['Product']] = relationship(back_populates='subcategory',
                                                               cascade='all, delete-orphan')
+
+    def __str__(self):
+        return f'{self.subcategory_name}'
 
 
 class Product(Base):
@@ -85,6 +91,8 @@ class Product(Base):
     subcategory: Mapped[SubCategory] = relationship(SubCategory, back_populates='subcategory_product')
     product_review: Mapped[List['Review']] = relationship(back_populates='products',
                                                           cascade='all, delete-orphan')
+    def __str__(self):
+        return f'{self.product_name}'
 
 
 class ProductImage(Base):
@@ -95,6 +103,7 @@ class ProductImage(Base):
     product_id: Mapped[int] = mapped_column(ForeignKey('product.id'))
 
     product: Mapped[Product] = relationship(Product, back_populates='product_images')
+
 
 
 class Review(Base):
@@ -109,3 +118,6 @@ class Review(Base):
 
     user: Mapped[UserProfile] = relationship(UserProfile, back_populates='user_review')
     products: Mapped[Product] = relationship(Product, back_populates='product_review')
+
+    def __str__(self):
+        return f'{self.comment}'

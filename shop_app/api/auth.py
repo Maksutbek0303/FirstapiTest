@@ -96,6 +96,14 @@ async def logout(refresh_token: str, db: Session = Depends(get_db)):
     return {'message': 'Вышли'}
 
 
+@auth_router.post('/refresh')
+async def refresh(refresh_token: str, db: Session = Depends(get_db)):
+    stored_token = db.query(RefreshToken).filter(RefreshToken.token == refresh_token).first()
+    if not stored_token:
+        raise HTTPException(status_code=401, detail='Маалымат туура эмес')
+
+    access_token = create_access_token({'sub': stored_token.id})
+    return {'access_token': access_token, 'token_type': 'Bearer'}
 
 
 
